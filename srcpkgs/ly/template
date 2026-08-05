@@ -1,0 +1,30 @@
+# Template file for 'ly'
+pkgname=ly
+version=1.4.1
+revision=1
+build_style=zig-build
+conf_files="/etc/ly/config.ini"
+makedepends="pam-devel libxcb-devel"
+short_desc="Lightweight TUI (ncurses-like) display manager for Linux and BSD"
+maintainer="xJayMorex <github@johntaylor.hu>"
+license="WTFPL-2.0"
+homepage="https://codeberg.org/fairyglade/ly"
+distfiles="https://codeberg.org/fairyglade/ly/archive/v${version}.tar.gz"
+checksum=4d1c10422e6c5b8d5a795150e4c364c82404f900c1a04318b83fe8d81fade58b
+nopie_files=/usr/bin/ly
+
+do_install() {
+	zig build installexe -Dinit_system=runit
+
+	vbin ${XBPS_MASTERDIR}usr/bin/ly
+	vmkdir etc/ly
+	vcopy ${XBPS_MASTERDIR}/etc/ly/* etc/ly
+	vmkdir etc/pam.d
+	vcopy ${XBPS_MASTERDIR}/etc/pam.d/* etc/pam.d
+	vmkdir etc/sv
+	vcopy ${XBPS_MASTERDIR}/etc/sv/ly etc/sv
+}
+
+post_install() {
+	vlicense license.md
+}
